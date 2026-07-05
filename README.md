@@ -7,3 +7,4 @@ How to run:
 3.open translator.html in a web browser.
 
 
+
