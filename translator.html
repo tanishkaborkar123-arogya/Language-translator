@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Language Translator</title>
+
+<style>
+
+body{
+font-family:Arial,sans-serif;
+background:#f2f2f2;
+margin:0;
+padding:20px;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,0.2);
+}
+
+h2{
+text-align:center;
+}
+
+.language-box{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:10px;
+margin-bottom:15px;
+flex-wrap:wrap;
+}
+
+select{
+padding:10px;
+font-size:16px;
+}
+
+button{
+padding:10px 15px;
+cursor:pointer;
+font-size:16px;
+}
+
+textarea{
+width:100%;
+height:150px;
+padding:10px;
+font-size:16px;
+resize:none;
+margin-top:10px;
+}
+
+.controls{
+display:flex;
+gap:10px;
+margin-top:10px;
+flex-wrap:wrap;
+}
+
+.instructions{
+margin-top:20px;
+background:#eef;
+padding:15px;
+border-radius:8px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Language Translator</h2>
+
+<div class="language-box">
+
+<select id="fromLang">
+
+<option value="en">English</option>
+<option value="hi">Hindi</option>
+<option value="fr">French</option>
+<option value="es">Spanish</option>
+<option value="de">German</option>
+<option value="it">Italian</option>
+<option value="ja">Japanese</option>
+<option value="ko">Korean</option>
+<option value="ru">Russian</option>
+<option value="zh-CN">Chinese</option>
+<option value="ar">Arabic</option>
+<option value="pt">Portuguese</option>
+<option value="bn">Bengali</option>
+<option value="ta">Tamil</option>
+<option value="te">Telugu</option>
+<option value="mr">Marathi</option>
+
+</select>
+
+<button onclick="swapLanguages()">🔄 Swap</button>
+
+<select id="toLang">
+
+<option value="hi">Hindi</option>
+<option value="en">English</option>
+<option value="fr">French</option>
+<option value="es">Spanish</option>
+<option value="de">German</option>
+<option value="it">Italian</option>
+<option value="ja">Japanese</option>
+<option value="ko">Korean</option>
+<option value="ru">Russian</option>
+<option value="zh-CN">Chinese</option>
+
+</select>
+
+</div>
+
+<textarea
+id="inputText"
+placeholder="Enter text here..."></textarea>
+
+<div class="controls">
+
+<button onclick="translateText()">
+Translate
+</button>
+
+<button onclick="copyText()">
+📋 Copy
+</button>
+
+<button onclick="speakText()">
+🔊 Speak
+</button>
+
+</div>
+
+<textarea
+id="outputText"
+placeholder="Translated text..."
+readonly></textarea>
+
+<div class="instructions">
+
+<h3>Instructions</h3>
+
+<ol>
+
+<li>Select the source language.</li>
+
+<li>Select the target language.</li>
+
+<li>Type your text in the upper box.</li>
+
+<li>Click <b>Translate</b>.</li>
+
+<li>Use <b>Swap</b> to exchange languages and text.</li>
+
+<li>Use <b>Copy</b> to copy translated text.</li>
+
+<li>Use <b>Speak</b> to hear translated text.</li>
+
+</ol>
+
+</div>
+
+</div>
+
+<script>
+
+async function translateText(){
+
+const text=document.getElementById("inputText").value;
+
+const from=document.getElementById("fromLang").value;
+
+const to=document.getElementById("toLang").value;
+
+if(text.trim()==""){
+
+alert("Enter some text.");
+
+return;
+
+}
+
+const url=`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${from}|${to}`;
+
+try{
+
+const response=await fetch(url);
+
+const data=await response.json();
+
+document.getElementById("outputText").value=data.responseData.translatedText;
+
+}
+
+catch(error){
+
+alert("Translation failed.");
+
+}
+
+}
+
+function swapLanguages(){
+
+let from=document.getElementById("fromLang");
+
+let to=document.getElementById("toLang");
+
+let temp=from.value;
+
+from.value=to.value;
+
+to.value=temp;
+
+let input=document.getElementById("inputText");
+
+let output=document.getElementById("outputText");
+
+let text=input.value;
+
+input.value=output.value;
+
+output.value=text;
+
+}
+
+function copyText(){
+
+let text=document.getElementById("outputText");
+
+navigator.clipboard.writeText(text.value);
+
+alert("Copied!");
+
+}
+
+function speakText(){
+
+let text=document.getElementById("outputText").value;
+
+if(text=="") return;
+
+let speech=new SpeechSynthesisUtterance(text);
+
+speech.lang=document.getElementById("toLang").value;
+
+window.speechSynthesis.speak(speech);
+
+}
+
+</script>
+
+</body>
+
+</html>
